@@ -1,103 +1,226 @@
-import Image from "next/image";
+"use client"
+// --- Import der Komponenten ---
+import BpmnViewerComponent from "../components/BpmnViewer";
+import EingabeXML from "../components/EingabeXML";
+import Eingabeprozess from "../components/Eingabeprozess";
+import React, { useState } from "react";
+import { semantikanalyse } from "./utils/semantikprompts";
+import { fehlerklassifikation } from "./utils/fehlerklassifikation";
+import Bewertung from "../components/Bewertung";
+import ReactMarkdown from "react-markdown";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  // --- State für die Eingabefelder --- 
+  const [bpmnXML, setBpmnXML] = useState("");
+  const [prozessbeschreibung, setProzessbeschreibung] = useState("");
+  const [inputFormaldiagnose, setInputFormaldiagnose] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // --- State für alle LLM-Prompts und Antworten ---
+  const [prompt, setPrompt] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [answerTwo, setAnswerTwo] = useState("");
+  const [answerThree, setAnswerThree] = useState("");
+  const [answerFour, setAnswerFour] = useState("");
+
+  // --- Erste LLM-Prompt-Route  mit Prompt als Eingabe---
+  async function sendPrompt() {
+    if (!prompt) return;
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+
+      const data = await res.json();
+      setAnswer(data.answer ?? data.error ?? "Funktioniert nicht");
+    } catch (err: any) {
+      setAnswer("Fehler: " + err.message);
+    }
+  }
+
+  // --- Zweite LLM-Prompt-Route  mit semantikanalyse, XML und Beschreibung als Eingabe---
+  async function sendPromptAlt() {
+    try {
+      const res = await fetch("/api/chat/raw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          semantikanalyse,
+          bpmnXML,
+          prozessbeschreibung
+        }),
+      });
+
+      const data = await res.json();
+      setAnswerTwo(data.answer ?? data.error ?? "Funktioniert nicht");
+    } catch (err: any) {
+      setAnswerTwo("Fehler: " + err.message);
+    }
+  }
+
+  // --- Dritte LLM-Prompt-Route mit fehlerklassifikation, XML und Beschreibung als Eingabe---
+  async function sendPromptThree() {
+    try {
+      const res = await fetch("/api/chat/raw/routeThree", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          fehlerklassifikation,
+          bpmnXML,
+          prozessbeschreibung
+        }),
+      });
+
+      const data = await res.json();
+      setAnswerThree(data.answer ?? data.error ?? "Funktioniert nicht");
+    } catch (err: any) {
+      setAnswerThree("Fehler: " + err.message);
+    }
+  }
+
+  // --- Vierte LLM-Prompt-Route mit vorherigen Fehlermdeldungen ---
+  async function sendPromptFour() {
+    try {
+      const res = await fetch("/api/chat/raw/routeFour", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          analysisAnswer: answerTwo,
+          classificationAnswer: answerThree,
+        }),
+      });
+      const data = await res.json();
+      setAnswerFour(data.answer ?? data.error ?? "Funktioniert nicht");
+    } catch (err: any) {
+      setAnswerFour("Fehler: " + err.message);
+    }
+  }
+
+  return (
+    <div>
+       {/* Überschrift */}
+      <h1 className="flex justify-center font-bold text-3xl mt-4">Evaluationsdemonstration für LLM-generierte BPMN-Modelle</h1>
+      <section className="bg-blue-50 border border-blue-200 rounded-lg p-6 my-8">
+        <h2 className="flex justify-center font-bold text-xl mt-8"> Qualitätsanalyse: Eingabemaske für das BPMN-Modell</h2>
+        <p>1) Trage hier die LLM-generierte XML und die Prozessbeschreibung ein</p>
+        
+         {/* Schritt 1: XML-Eingabe */}
+        <div className="my-4 p-4 bg-white border rounded-lg shadow-sm">
+          <h3 className="font-semibold mb-2">Schritt 1: BPMN-XML einfügen</h3>
+          <EingabeXML onXmlChange={setBpmnXML} />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        {/* Schritt 2: Prozessbeschreibung */}
+        <div className="my-4 p-4 bg-white border rounded-lg shadow-sm">
+          <h3 className="font-semibold mb-2">Schritt 2: Prozessbeschreibung eingeben</h3>
+          <Eingabeprozess onProzessChange={setProzessbeschreibung} />
+        </div>
+        
+        {/* Visualisierungsmodul des BPMN-Modells */}
+        <h2 className="flex justify-center font-bold text-xl">Visualisierungsmodul des BPMN-Modells</h2>
+        <BpmnViewerComponent xml={bpmnXML} />
+        
+        {/* Qualitätsanalyse: Syntaxprüfung */}
+        <h1 className="flex justify-center font-bold text-xl">Qualitätsanalyse: Syntaxprüfung</h1>
+        <p>1) Trage hier die Fehlermeldungen aus der Regel-Validierung ein, um die Formaldiagnose zu starten und Vorschläge zu generieren</p>
+        <p>2) Notiere die Fehleranzahl und die korrigierte Gesamtelementanzahl für die spätere Bewertung</p>
+
+        {/* OpenAI UI + Styling */}
+        <div style={{ marginTop: 24 }}>
+          {/* Prompteingabe (Fehlermeldungen) */}
+          <textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Eintrag in folgendem Format: NR ; Element : (Elementbezeichnung) ; Fehler : (Fehlermeldung)"
+            style={{ width: "100%", minHeight: 100, padding: 8 }}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <button
+            onClick={sendPrompt}
+            className="border px-4 py-2 rounded hover:bg-gray-100 block mx-auto mt-2"
+          >
+            Formaldiagnose + Vorschläge generieren
+          </button>
+
+          {/* Antwort 1 mit React-Markdown-Viewer */}
+          {answer && (
+            <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none bg-gray-50 p-4 rounded">
+              <ReactMarkdown>{answer}</ReactMarkdown>
+            </div>
+          )}
+        </div>
+
+      </section>
+      <section className="bg-green-50 border border-green-200 rounded-lg p-6 my-8">
+        {/* Qualitätsanalyse: Semantikprüfung */}
+        <div className="flex justify-center font-bold text-xl">Qualitätsanalyse: Semantikprüfung</div>
+        <p> 1) Zum Ausführen der Inhaltsanalyse und Modellvalidierung drücke den Knopf "Analyse- und Diagnose"</p>
+
+        {/* Zweite OpenAI UI */}
+        <div style={{ marginTop: 24 }}>
+          <button
+            onClick={sendPromptAlt}
+            className="border px-4 py-2 rounded hover:bg-gray-100 block mx-auto mt-2"
+          >
+            Analyse- und Diagnose
+          </button>
+
+          {/* Antwort 2 mit React-Markdown-Viewer */}
+          {answerTwo && (
+            <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none bg-gray-50 p-4 rounded">
+              <ReactMarkdown>{answerTwo}</ReactMarkdown>
+            </div>
+          )}
+        </div>
+
+        <h2 className="flex justify-center font-bold text-xl mt-8">Semantische Qualitätsanalyse: Fehlerklassifikation</h2>
+        <p>2) Zum Ausführen der Fehlerklassifikation drücke den Knopf "Fehlerklassifikation"</p>
+       
+        {/* Dritte OpenAI UI */}
+        <div style={{ marginTop: 24 }}>
+          <button
+            onClick={sendPromptThree}
+            className="border px-4 py-2 rounded hover:bg-gray-100 block mx-auto mt-2"
+          >
+            Fehlerklassifikation
+          </button>
+
+          {/* Antwort 3 mit React-Markdown-Viewer */}
+          {answerThree && (
+            <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none bg-gray-50 p-4 rounded">
+              <ReactMarkdown>{answerThree}</ReactMarkdown>
+            </div>
+          )}
+        </div>
+        
+        <h2 className="flex justify-center font-bold text-xl mt-8">Semantische Qualitätsanalyse: Verbesserungsvorschläge</h2>
+        <p>3) Zum Generieren von Verbesserungsvorschlägen drücke den Knopf "Verbesserungsvorschläge generieren"</p>
+       
+        {/* Vierte OpenAI UI */}
+        <div style={{ marginTop: 24 }}>
+          <button
+            onClick={sendPromptFour}
+            className="border px-4 py-2 rounded hover:bg-gray-100 block mx-auto mt-2"
+          >
+            Verbesserungsvorschläge generieren
+          </button>
+
+          {/* Antwort 4 mit React-Markdown-Viewer */}
+          {answerFour && (
+            <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none bg-gray-50 p-4 rounded">
+              <ReactMarkdown>{answerFour}</ReactMarkdown>
+            </div>
+          )}
+        </div>
+      </section>
+      <section className="bg-purple-50 border border-purple-200 rounded-lg p-6 my-8">
+        <h1 className="flex justify-center font-bold text-2xl">Die Qualitätsbewertung</h1>
+
+        <p>1) Trage hier die einzelnen Werte zur Bewertung ein</p>
+
+        {/* Die Qualitätsbewertung */}
+        <Bewertung />
+      </section>
     </div>
   );
 }

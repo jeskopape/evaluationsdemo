@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://example.com/bpmn20" exporter="Camunda Modeler" exporterVersion="5.36.1">
+  <process id="RechnungsfreigabeProzess" isExecutable="true">
+    <startEvent id="StartEvent_RechnungEingang" name="Rechnung eingegangen" />
+    <task id="Task_Erfassen" name="Rechnung erfassen" />
+    <task id="Task_PruefenSachbearbeiter" name="Rechnung prüfen (Sachbearbeiter)" />
+    <exclusiveGateway id="Gateway_BetragHoeher1000" name="Betrag &#62; 1000€?" />
+    <task id="Task_PruefenGF" name="Rechnung prüfen (GF)" />
+    <exclusiveGateway id="Gateway_Genehmigung" name="Genehmigt?" />
+    <task id="Task_ERP" name="Rechnung ins ERP-System überführen" />
+    <task id="Task_Archivieren" name="Rechnung archivieren" />
+    <endEvent id="EndEvent_Erp" />
+    <endEvent id="EndEvent_Archiv" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Rechnungsfreigabe">
+    <bpmndi:BPMNPlane id="BPMNPlane_Rechnungsfreigabe" bpmnElement="RechnungsfreigabeProzess">
+      <bpmndi:BPMNShape id="StartEventShape" bpmnElement="StartEvent_RechnungEingang">
+        <omgdc:Bounds x="170" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="156" y="138" width="64" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ErfassenShape" bpmnElement="Task_Erfassen">
+        <omgdc:Bounds x="230" y="85" width="100" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PruefenSachbearbeiterShape" bpmnElement="Task_PruefenSachbearbeiter">
+        <omgdc:Bounds x="350" y="90" width="120" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_BetragHoeher1000Shape" bpmnElement="Gateway_BetragHoeher1000" isMarkerVisible="true">
+        <omgdc:Bounds x="490" y="100" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="474" y="150" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PruefenGFShape" bpmnElement="Task_PruefenGF">
+        <omgdc:Bounds x="570" y="40" width="120" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_GenehmigungShape" bpmnElement="Gateway_Genehmigung" isMarkerVisible="true">
+        <omgdc:Bounds x="720" y="100" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="760" y="133" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ERPShape" bpmnElement="Task_ERP">
+        <omgdc:Bounds x="790" y="40" width="120" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ArchivierenShape" bpmnElement="Task_Archivieren">
+        <omgdc:Bounds x="790" y="160" width="120" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_ErpShape" bpmnElement="EndEvent_Erp">
+        <omgdc:Bounds x="930" y="55" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_ArchivShape" bpmnElement="EndEvent_Archiv">
+        <omgdc:Bounds x="930" y="175" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

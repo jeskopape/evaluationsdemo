@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Evaluationsdemonstration für LLM-generierte BPMN-Modelle
+Dieses Projekt dient zur Demonstration des im Rahmen der Abschlussarbeit entwickelten Evaluationsframeworks von LLM-generierten BPMN-Modellen. 
+Die Implementierung zeigt die Funktionalität des Frameworks mit dem beigelieferten BPMN-Modell und der Prozessbeschreibung auf und bietet eine systematische Darstellung des entwickelten Frameworks. 
 
-## Getting Started
+## Aufbau des Projekts
+Das Projekt besteht aus den Folgenden Komponenten: 
+- Eingabemaske für das BPMN-Modell und die Prozessbeschreibung
+- Syntaktischer Qualitätsanalyse (Visualisierungsmodul, Formaldiagnose und Syntaxkorrektur)
+- Semantischer Qualitätsanalyse (Analyse- und Diagnosemodul, Fehlerklassifikation, Semantikkorrektur)
+- Die Qualitätsbewertung (Syntaxbewertung, Semantikbewertung und Gesamtqualitätsscore)
 
-First, run the development server:
+## Installation und Start
+***
+Ene kurze Einführung in die Installation des Projekts: 
+````
+$ git clone 
+$ cd /prototyp 
+$ npm install 
+$ npm run dev 
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Öffne nun die URL http://localhost:3000 im Browser.
+````
+- Um die Demo nutzen zu können, ist ein eigener OpenAI-Key in der .env anzulegen. 
+- Die XML und die Prozessbeschreibung aus der Demonstration befinden sich im "input"-Ordner.

@@ -1,0 +1,5 @@
+Sobald eine Rechnung eingeht, wird diese von der Buchhaltung erfasst.
+Danach prüft ein Sachbearbeiter den Inhalt der Rechnung auf Korrektheit.
+Wenn der Betrag über 1000€ liegt, erfolgt eine zusätzliche Prüfung durch die Geschäftsführung.
+Aufbauend darauf wird entschieden, ob die Rechnung genehmigt oder abgelehnt wird.
+Eine genehmigte Rechnung wird in das ERP-System zur Zahlung überführt. In beiden Fällen endet der Prozess.
