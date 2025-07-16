@@ -1,8 +1,10 @@
 # Evaluationsdemonstration für LLM-generierte BPMN-Modelle
+
 Dieses Projekt dient zur Demonstration des im Rahmen der Abschlussarbeit entwickelten Evaluationsframeworks von LLM-generierten BPMN-Modellen. 
 Die Implementierung zeigt die Funktionalität des Frameworks mit dem beigelieferten BPMN-Modell und der Prozessbeschreibung auf und bietet eine systematische Darstellung des entwickelten Frameworks. 
 
 ## Aufbau des Projekts
+
 Das Projekt besteht aus den Folgenden Komponenten: 
 - Eingabemaske für das BPMN-Modell und die Prozessbeschreibung
 - Syntaktischer Qualitätsanalyse (Visualisierungsmodul, Formaldiagnose und Syntaxkorrektur)
@@ -10,7 +12,7 @@ Das Projekt besteht aus den Folgenden Komponenten:
 - Die Qualitätsbewertung (Syntaxbewertung, Semantikbewertung und Gesamtqualitätsscore)
 
 ## Installation und Start
-***
+
 Ene kurze Einführung in die Installation des Projekts: 
 ````
 $ git clone 
