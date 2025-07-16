@@ -15,12 +15,12 @@ Das Projekt besteht aus den Folgenden Komponenten:
 
 Ene kurze Einführung in die Installation des Projekts: 
 ````
-$ git clone 
-$ cd /prototyp 
+$ git clone https://github.com/jeskopape/evaluationsdemo.git
+$ cd evaluationsdemo
 $ npm install 
 $ npm run dev 
 
 Öffne nun die URL http://localhost:3000 im Browser.
 ````
-- Um die Demo nutzen zu können, ist ein eigener OpenAI-Key in der .env anzulegen. 
+- Um die Demo nutzen zu können, ist eine .env und ein OpenAI-Key anzulegen. 
 - Die XML und die Prozessbeschreibung aus der Demonstration befinden sich im "input"-Ordner.
